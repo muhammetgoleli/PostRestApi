@@ -32,7 +32,7 @@ class DataInserter {
     public function insertData(string $endpoint): void {
         try {
             $response = $this->httpClient->post($endpoint);
-        echo 'Response from ' . $endpoint . ': ' . $response . "\n";
+            echo 'Response from ' . $endpoint . ': ' . $response . "\n";
         } catch (Exception $e) {
             echo 'Error sending request to ' . $endpoint . ': ' . $e->getMessage() . "\n";
         }
