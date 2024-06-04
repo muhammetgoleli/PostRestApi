@@ -7,20 +7,23 @@ namespace App\Repositories;
 use App\Database;
 use PDO;
 
-class UserRepository {
+class UserRepository
+{
 
-    public function __construct(private Database $database) {
-
+    public function __construct(private Database $database)
+    {
     }
- 
-    public function getAll(): array {
+
+    public function getAll(): array
+    {
         $pdo = $this->database->getConnection();
 
         $stmt = $pdo->query('SELECT * FROM posts');
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create(Array $data): string {
+    public function create(array $data): string
+    {
 
         $address = $data['address']['street'] . ', ' . $data['address']['suite'] . ', ' . $data['address']['city'] . ', ' . $data['address']['zipcode'];
         $company = $data['company']['name'] . ', ' . $data['company']['catchPhrase'] . ', ' . $data['company']['bs'];
@@ -29,7 +32,7 @@ class UserRepository {
         VALUES(:name, :username, :email, :address, :phone, :website, :company)";
 
         $pdo = $this->database->getConnection();
-        
+
         $stmt = $pdo->prepare($sql);
 
         $stmt->bindValue(':name', $data['name'], PDO::PARAM_STR);
@@ -40,10 +43,18 @@ class UserRepository {
         $stmt->bindValue(':website', $data['website'], PDO::PARAM_STR);
         $stmt->bindValue(':company', $company, PDO::PARAM_STR);
 
-    
+
         $stmt->execute();
 
         return $pdo->lastInsertId();
+    }
 
+    public function exists(string $email): bool
+    {
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+
+        return $stmt->fetchColumn() > 0;
     }
 }

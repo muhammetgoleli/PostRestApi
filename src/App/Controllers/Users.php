@@ -25,13 +25,16 @@ class Users {
         $userRepository = $this->userRepository;
         
         foreach ($users as $user) {
-            $id = $userRepository->create($user);
+            if(!$this->userRepository->exists($user['email'])) {
+                $userRepository->create($user);
+            }
         }
 
         $body = json_encode([
-            'id' => $id,
             'message' => 'Users Created'
         ]);
+
+        $body = json_encode(['message' => 'Users Created']);
 
         $response->getBody()->write($body);
 
